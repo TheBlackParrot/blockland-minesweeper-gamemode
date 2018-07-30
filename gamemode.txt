@@ -1,0 +1,23 @@
+//add-ons to load
+ADDON Emote_Alarm
+ADDON Emote_Confusion
+ADDON Emote_Hate
+ADDON Emote_Love
+ADDON Print_2x2f_Minesweeper
+ADDON Gamemode_Minesweeper
+ADDON Weapon_Rocket_Launcher
+
+
+//environment
+$EnvGuiServer::SimpleMode 1
+$EnvGuiServer::SkyFile Add-Ons/Sky_Skylands/Skylands.dml
+$EnvGuiServer::WaterFile None
+$EnvGuiServer::GroundFile Add-Ons/Ground_Plate/plate.ground
+
+
+//minigame rules
+$MiniGame::Enabled 0
+
+
+//config settings
+$Server::WelcomeMessage \c2Welcome to Blockland, %1.

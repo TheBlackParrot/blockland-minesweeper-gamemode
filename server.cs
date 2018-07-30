@@ -639,7 +639,7 @@ package MinesweeperPackage {
 	}
 
 	function serverCmdLight(%client) {
-		if(!isObject(%client.player) || %client.finished) {
+		if(!isObject(%client.player)) {
 			%client.play2D(errorSound);
 			return parent::serverCmdLight(%client);
 		}
@@ -652,7 +652,7 @@ package MinesweeperPackage {
 	}
 
 	function serverCmdPlantBrick(%client) {
-		if(!isObject(%client.player) || %client.finished) {
+		if(!isObject(%client.player)) {
 			%client.play2D(errorSound);
 			return;
 		}

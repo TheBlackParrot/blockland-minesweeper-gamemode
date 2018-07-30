@@ -204,12 +204,14 @@ function fxDTSBrick::onMSPush(%this, %client) {
 		%this.setColor(11);
 		%this.originalColorID = 11;
 
-		%v = %client.player.getVelocity();
-		%client.player.spawnExplosion(rocketLauncherProjectile, 0.5);
-		%this.spawnExplosion(rocketLauncherProjectile, 0.2);
-		%client.player.setDamageLevel(0);
-		if(isObject(%client.player)) {
-			%client.player.schedule(33, setVelocity, vectorAdd(%v, "0 0 20"));
+		if(!%client.disableExplosions && !%owner.disableExplosions) {
+			%v = %client.player.getVelocity();
+			%client.player.spawnExplosion(rocketLauncherProjectile, 0.5);
+			%this.spawnExplosion(rocketLauncherProjectile, 0.2);
+			%client.player.setDamageLevel(0);
+			if(isObject(%client.player)) {
+				%client.player.schedule(33, setVelocity, vectorAdd(%v, "0 0 20"));
+			}
 		}
 		
 		return;
@@ -452,6 +454,7 @@ function serverCmdHelp(%client) {
 	messageClient(%client, '', "\c5/endMinesweeper [delete] \c7-- ends your game and (optionally) deletes your board");
 	messageClient(%client, '', "\c5/toggleAssist \c7-- adds highlights to the grid, showing what tiles correspond to numbers");
 	messageClient(%client, '', "\c5/restartMinesweeper \c7-- restarts your board");
+	messageClient(%client, '', "\c5/toggleExplosions \c7-- toggles you and the mine exploding when you click on a mine");
 	messageClient(%client, '', " ");
 
 	messageClient(%client, '', "\c6--== CONTROLS ==--");
@@ -597,10 +600,11 @@ function GameConnection::castAssist(%this) {
 }
 
 function serverCmdToggleAssist(%client) {
-	%client.chatMessage(%client.enableAssist);
 	if(%client.enableAssist) {
+		messageClient(%client, '', "\c6Assist mode is now \c0disabled.");
 		%client.enableAssist = false;
 	} else {
+		messageClient(%client, '', "\c6Assist mode is now \c2enabled.");
 		%client.enableAssist = true;
 		%client.castAssist();
 	}
@@ -608,6 +612,16 @@ function serverCmdToggleAssist(%client) {
 
 function serverCmdRestartMinesweeper(%client) {
 	serverCmdMinesweeper(%client, %client.gridWidth, %client.gridHeight, %client.mineCount, %client.gridBrick[0,0].originalColorID);
+}
+
+function serverCmdToggleExplosions(%client) {
+	if(%client.disableExplosions) {
+		messageClient(%client, '', "\c6Explosions are now \c2enabled.");
+		%client.disableExplosions = false;
+	} else {
+		messageClient(%client, '', "\c6Explosions are now \c0disabled.");
+		%client.disableExplosions = true;
+	}
 }
 
 function GameConnection::addContributor(%this, %who) {

@@ -491,7 +491,7 @@ function Player::castMinesweeperFire(%this) {
 		return false;
 	}
 
-	if(getTrustLevel(%hit.ownerClient, %this.client) $= "") {
+	if(!getTrustLevel(%hit.ownerClient, %this.client)) {
 		return false;
 	}
 
@@ -550,7 +550,7 @@ function GameConnection::castAssist(%this) {
 		return false;
 	}
 
-	if(getTrustLevel(%this, %hit.ownerClient) $= "") {
+	if(!getTrustLevel(%this, %hit.ownerClient)) {
 		//%this.chatMessage("no trust" SPC $Sim::Time);
 		%this.assistLoop = %this.schedule(333, castAssist);
 		return;
@@ -628,6 +628,14 @@ function GameConnection::addContributor(%this, %who) {
 	if(stripos(%this.contributors, "\t" @ %who.getPlayerName() @ "\t") == -1) {
 		%this.contributors = "\t" @ trim(%this.contributors TAB %who.getPlayerName()) @ "\t";
 	}
+}
+
+function test() {
+	$test = new StaticShape() {
+		datablock = cube;
+		position = "0 0 10";
+		scale = "0.2 1 10";
+	};
 }
 
 package MinesweeperPackage {

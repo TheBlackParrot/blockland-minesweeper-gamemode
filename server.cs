@@ -611,7 +611,7 @@ function serverCmdToggleAssist(%client) {
 }
 
 function serverCmdRestartMinesweeper(%client) {
-	serverCmdMinesweeper(%client, %client.gridWidth, %client.gridHeight, %client.mineCount, %client.gridBrick[0,0].originalColorID);
+	serverCmdMinesweeper(%client, %client.gridWidth, %client.gridHeight, %client.mineCount, %client.gridBrick[0,0].originalColorID == 11 ? 5 : %client.gridBrick[0,0].originalColorID);
 }
 
 function serverCmdToggleExplosions(%client) {

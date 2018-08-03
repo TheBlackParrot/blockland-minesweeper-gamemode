@@ -384,6 +384,8 @@ function serverCmdMinesweeper(%client, %width, %height, %mines, %color) {
 
 	%client.initGrid(%width, %height, %mines, %color);
 }
+function serverCmdMines(%client, %width, %height, %mines, %color) { serverCmdMinesweeper(%client, %width, %height, %mines, %color); }
+function serverCmdM(%client, %width, %height, %mines, %color) { serverCmdMinesweeper(%client, %width, %height, %mines, %color); }
 
 function serverCmdTPM(%client, %victimSearch) {
 	if(!isObject(%client.player)) {
@@ -438,6 +440,8 @@ function serverCmdEndMinesweeper(%client, %clear) {
 	}
 	%client.instantRespawn();
 }
+function serverCmdEnd(%client, %clear) { serverCmdEndMinesweeper(%client, %clear); }
+function serverCmdE(%client, %clear) { serverCmdEndMinesweeper(%client, %clear); }
 
 function GameConnection::checkToWin(%client) {
 	if(%client.minesLeft == 0) {
@@ -609,10 +613,14 @@ function serverCmdToggleAssist(%client) {
 		%client.castAssist();
 	}
 }
+function serverCmdTA(%client) { serverCmdToggleAssist(%client); }
 
 function serverCmdRestartMinesweeper(%client) {
 	serverCmdMinesweeper(%client, %client.gridWidth, %client.gridHeight, %client.mineCount, %client.gridBrick[0,0].originalColorID == 11 ? 5 : %client.gridBrick[0,0].originalColorID);
 }
+function serverCmdRestart(%client) { serverCmdRestartMinesweeper(%client); }
+function serverCmdRes(%client) { serverCmdRestartMinesweeper(%client); }
+function serverCmdR(%client) { serverCmdRestartMinesweeper(%client); }
 
 function serverCmdToggleExplosions(%client) {
 	if(%client.disableExplosions) {
@@ -623,6 +631,8 @@ function serverCmdToggleExplosions(%client) {
 		%client.disableExplosions = true;
 	}
 }
+function serverCmdTE(%client) { serverCmdToggleExplosions(%client); }
+
 
 function GameConnection::addContributor(%this, %who) {
 	if(stripos(%this.contributors, "\t" @ %who.getPlayerName() @ "\t") == -1) {

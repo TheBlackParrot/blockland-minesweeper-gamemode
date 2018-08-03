@@ -321,7 +321,7 @@ function GameConnection::endMinesweeper(%this, %win) {
 			}
 		}
 
-		messageAll('', "\c4" @ %names SPC "\c6won a\c2" SPC %this.gridWidth @ "x" @ %this.gridHeight @ "," SPC %this.mineCount SPC "\c6Minesweeper game!");
+		messageAll('', "\c4" @ %names SPC "\c6won a\c2" SPC %this.gridWidth @ "x" @ %this.gridHeight @ "," SPC %this.mineCount SPC "\c6Minesweeper game in \c2" @ getTimeString(mFloor($Sim::Time - %this.gameStartAt)) @ "\c6!");
 	}
 }
 

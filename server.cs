@@ -355,6 +355,11 @@ function serverCmdMinesweeper(%client, %width, %height, %mines, %color) {
 			if(%height $= "") { %height = 16; }
 			if(%mines $= "") { %mines = 64; }
 
+			// no, seriously
+			if(strLen(%width) >= 3) { %width = 64; }
+			if(strLen(%height) >= 3) { %height = 64; }
+			if(strLen(%mines) >= 5) { %mines = 1024; }
+
 			if(%width < 8) { %width = 8; }
 			if(%height < 8) { %height = 8; }
 			if(%mines < mCeil((%width*%height)/16)) { %mines = mCeil((%width*%height)/16); }
@@ -375,9 +380,12 @@ function serverCmdMinesweeper(%client, %width, %height, %mines, %color) {
 		%color = 5;
 	}
 	if(%color < 0) {
-		%color = 0;
-	} else if(%color > 35) {
+		%color = 5;
+	} else if(%color > 63) {
 		%color = 63;
+	}
+	if(getColorIDTable(%color) $= "1.000000 0.000000 1.000000 0.000000") {
+		%color = 5;
 	}
 
 	messageClient(%client, '', "\c6Starting a(n)\c2" SPC %width @ "x" @ %height @ ", " @ %mines SPC "\c6Minesweeper game...");
@@ -452,13 +460,14 @@ function GameConnection::checkToWin(%client) {
 
 function serverCmdHelp(%client) {
 	messageClient(%client, '', "\c6--== COMMANDS ==--");
-	messageClient(%client, '', "\c5/minesweeper \c3[width] [length] [mines] \c7-- starts a Minesweeper game");
-	messageClient(%client, '', "\c5/minesweeper \c3[easy/beginner, medium/intermediate, hard/expert] \c7-- starts a Minesweeper game with a usual Winmine difficulty preset");
+	messageClient(%client, '', "\c5/minesweeper \c3[width] [length] [mines] (colorIdx) \c7-- starts a Minesweeper game, optionally with a colored board");
+	messageClient(%client, '', "\c5/minesweeper \c3[easy/beginner, medium/intermediate, hard/expert] (colorIdx) \c7-- starts a Minesweeper game with a usual Winmine difficulty preset");
 	messageClient(%client, '', "\c5/tpm \c7-- teleports you to your game board or a specified player's game board");
 	messageClient(%client, '', "\c5/endMinesweeper [delete] \c7-- ends your game and (optionally) deletes your board");
 	messageClient(%client, '', "\c5/toggleAssist \c7-- adds highlights to the grid, showing what tiles correspond to numbers");
 	messageClient(%client, '', "\c5/restartMinesweeper \c7-- restarts your board");
 	messageClient(%client, '', "\c5/toggleExplosions \c7-- toggles you and the mine exploding when you click on a mine");
+	messageClient(%client, '', "\c7(Single letter shortcuts exist for all commands)");
 	messageClient(%client, '', " ");
 
 	messageClient(%client, '', "\c6--== CONTROLS ==--");

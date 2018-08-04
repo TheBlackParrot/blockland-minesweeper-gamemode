@@ -11,15 +11,8 @@ $MINESWEEPER_TILE["MINE"] = 0;
 $MINESWEEPER_TILE["FLAGGED"] = 1;
 $MINESWEEPER_TILE["HIDDEN"] = 2;
 
-// ~~you can win the game by flagging all tiles, add a tile limit?~~
-// ~~the game needs to start with a blank tile to reveal some spaces, generate a board based off what they click~~
-// ?? games can be generated with 1 mine ?? (can't reproduce)
-// add a timer and some stats
-// ~~ending the game should also delete the board~~
-// ~~allow players to teleport people they trust~~
-// ~~start the game in a blob~~
-
 exec("./sounds.cs");
+exec("./shapes.cs");
 
 function GameConnection::deleteGrid(%this) {
 	%w = %this.gridWidth;
@@ -29,6 +22,10 @@ function GameConnection::deleteGrid(%this) {
 		for(%y = 0; %y < %h; %y++) {
 			%this.gridBrick[%x,%y].delete();
 		}
+	}
+
+	if(isObject($Minesweeper::GridFloor[%this.gridIdx])) {
+		$Minesweeper::GridFloor[%this.gridIdx].delete();
 	}
 
 	$Minesweeper::GridSpots = " " @ trim(strReplace($Minesweeper::GridSpots, " " @ %this.gridIdx @ " ", "")) @ " ";
@@ -180,6 +177,19 @@ function GameConnection::initGrid(%this, %width, %height, %mines, %color) {
 	%this.gridHeight = %height;
 	%this.mineCount = %mines || mCeil((%width * %height)/24);
 
+	$Minesweeper::GridFloor[%idx] = %shape = new StaticShape(MinesweeperFloor) {
+		dataBlock = MinesweeperFloorShape;
+		position = -0.5 + (%width/2) SPC -0.5 + (%height/2) SPC (%this.gridIdx * 35) + 1000;
+		scale = 16 + (%width*2) SPC 16 + (%height*2) SPC 0.5;
+	};
+	%rgb = getColorIDTable(%color);
+	%r = getWord(%rgb, 0);
+	%g = getWord(%rgb, 1);
+	%b = getWord(%rgb, 2);
+	%floorColor = %r/1.25 SPC %g/1.25 SPC %b/1.25;
+
+	%shape.setNodeColor("ALL", %floorColor SPC "1");
+
 	if(isObject(%this.player)) {
 		%this.player.setTransform((%width / 2) SPC (%height / 2) SPC (%this.gridIdx * 35) + 1003);
 	}
@@ -203,6 +213,7 @@ function fxDTSBrick::onMSPush(%this, %client) {
 		%this.ownerClient.endMinesweeper();
 		%this.setColor(11);
 		%this.originalColorID = 11;
+		$Minesweeper::GridFloor[%this.ownerClient.gridIdx].setNodeColor("ALL", "0.8 0 0 1");
 
 		if(!%client.disableExplosions && !%owner.disableExplosions) {
 			%v = %client.player.getVelocity();
@@ -322,6 +333,7 @@ function GameConnection::endMinesweeper(%this, %win) {
 		}
 
 		messageAll('', "\c4" @ %names SPC "\c6won a\c2" SPC %this.gridWidth @ "x" @ %this.gridHeight @ "," SPC %this.mineCount SPC "\c6Minesweeper game in \c2" @ getTimeString(mFloor($Sim::Time - %this.gameStartAt)) @ "\c6!");
+		$Minesweeper::GridFloor[%this.gridIdx].setNodeColor("ALL", "0.0 0.8 0.0 1");
 	}
 }
 

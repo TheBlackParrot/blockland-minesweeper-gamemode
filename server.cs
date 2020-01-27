@@ -28,14 +28,13 @@ function GameConnection::deleteGrid(%this) {
 		$Minesweeper::GridFloor[%this.gridIdx].delete();
 	}
 
-	$Minesweeper::GridSpots = " " @ trim(strReplace($Minesweeper::GridSpots, " " @ %this.gridIdx @ " ", "")) @ " ";
+	$Minesweeper::GridSpot[%this.gridIdx] = 0;
 }
 
 function GameConnection::setSurroundingMines(%this) {
 	%width = %this.gridWidth;
 	%height = %this.gridHeight;
 
-	// counting mines around tiles
 	for(%x = 0; %x < %width; %x++) {
 		for(%y = 0; %y < %height; %y++) {
 			%brick = %this.gridBrick[%x, %y];
@@ -120,19 +119,15 @@ function GameConnection::initGrid(%this, %width, %height, %mines, %color) {
 		%this.deleteGrid();
 	}
 
-	//%this.gridIdx = $Minesweeper::Temp;
-	//$Minesweeper::Temp++;
-
-	%idx = 0;
-	//talk(stripos($Minesweeper::GridSpots, %idx @ " "));
-	while(stripos($Minesweeper::GridSpots, " " @ %idx @ " ") != -1) {
-		%idx++;
-		//talk("is now" SPC %idx);
+	// hardcoding at 99, sorry
+	for(%idx = 0; %idx < 99; %idx++) {
+		if(!$Minesweeper::GridSpot[%idx]) {
+			break;
+		}
 	}
 
 	%this.gridIdx = %this.score = %idx;
-	$Minesweeper::GridSpots = " " @ trim($Minesweeper::GridSpots SPC %idx) @ " ";
-	talk("spots:" SPC $Minesweeper::GridSpots);
+	$Minesweeper::GridSpot[%idx] = 1;
 
 	%this.minesLeft = 0;
 	%this.mineCount = 0;
@@ -560,8 +555,6 @@ function GameConnection::castAssist(%this) {
 		return;
 	}
 
-	//%this.chatMessage("casting assist" SPC $Sim::Time);
-
 	%player = %this.player;
 	
 	%eye = vectorScale(%player.getEyeVector(), 5);
@@ -570,18 +563,14 @@ function GameConnection::castAssist(%this) {
 	%hit = getWord(containerRaycast(%pos, vectorAdd(%pos, %eye), %mask, %player), 0);
 
 	if(!isObject(%hit)) {
-		//%this.chatMessage("wasn't an object" SPC $Sim::Time);
 		%this.assistLoop = %this.schedule(333, castAssist);
 		return false;
 	}
 
 	if(!getTrustLevel(%this, %hit.ownerClient)) {
-		//%this.chatMessage("no trust" SPC $Sim::Time);
 		%this.assistLoop = %this.schedule(333, castAssist);
 		return;
 	}
-
-	//%this.chatMessage("got to msg 1" SPC $Sim::Time);
 
 	%owner = %hit.ownerClient;
 	%x = %hit.x;

@@ -24,11 +24,11 @@ function GameConnection::deleteGrid(%this) {
 		}
 	}
 
-	if(isObject($Minesweeper::GridFloor[%this.gridIdx])) {
-		$Minesweeper::GridFloor[%this.gridIdx].delete();
+	if(isObject($Server::Minesweeper::GridFloor[%this.gridIdx])) {
+		$Server::Minesweeper::GridFloor[%this.gridIdx].delete();
 	}
 
-	$Minesweeper::GridSpot[%this.gridIdx] = 0;
+	$Server::Minesweeper::GridSpot[%this.gridIdx] = 0;
 }
 
 function GameConnection::setSurroundingMines(%this) {
@@ -121,13 +121,13 @@ function GameConnection::initGrid(%this, %width, %height, %mines, %color) {
 
 	// hardcoding at 99, sorry
 	for(%idx = 0; %idx < 99; %idx++) {
-		if(!$Minesweeper::GridSpot[%idx]) {
+		if(!$Server::Minesweeper::GridSpot[%idx]) {
 			break;
 		}
 	}
 
 	%this.gridIdx = %this.score = %idx;
-	$Minesweeper::GridSpot[%idx] = 1;
+	$Server::Minesweeper::GridSpot[%idx] = 1;
 
 	%this.minesLeft = 0;
 	%this.mineCount = 0;
@@ -172,7 +172,7 @@ function GameConnection::initGrid(%this, %width, %height, %mines, %color) {
 	%this.gridHeight = %height;
 	%this.mineCount = %mines || mCeil((%width * %height)/24);
 
-	$Minesweeper::GridFloor[%idx] = %shape = new StaticShape(MinesweeperFloor) {
+	$Server::Minesweeper::GridFloor[%idx] = %shape = new StaticShape(MinesweeperFloor) {
 		dataBlock = MinesweeperFloorShape;
 		position = -0.5 + (%width/2) SPC -0.5 + (%height/2) SPC (%this.gridIdx * 35) + 1000;
 		scale = 16 + (%width*2) SPC 16 + (%height*2) SPC 0.5;
@@ -208,7 +208,7 @@ function fxDTSBrick::onMSPush(%this, %client) {
 		%this.ownerClient.endMinesweeper();
 		%this.setColor(11);
 		%this.originalColorID = 11;
-		$Minesweeper::GridFloor[%this.ownerClient.gridIdx].setNodeColor("ALL", "0.8 0 0 1");
+		$Server::Minesweeper::GridFloor[%this.ownerClient.gridIdx].setNodeColor("ALL", "0.8 0 0 1");
 
 		if(!%client.disableExplosions && !%owner.disableExplosions) {
 			%v = %client.player.getVelocity();
@@ -328,7 +328,7 @@ function GameConnection::endMinesweeper(%this, %win) {
 		}
 
 		messageAll('', "\c4" @ %names SPC "\c6won a\c2" SPC %this.gridWidth @ "x" @ %this.gridHeight @ "," SPC %this.mineCount SPC "\c6Minesweeper game in \c2" @ getTimeString(mFloor($Sim::Time - %this.gameStartAt)) @ "\c6!");
-		$Minesweeper::GridFloor[%this.gridIdx].setNodeColor("ALL", "0.0 0.8 0.0 1");
+		$Server::Minesweeper::GridFloor[%this.gridIdx].setNodeColor("ALL", "0.0 0.8 0.0 1");
 	}
 }
 

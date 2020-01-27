@@ -718,3 +718,66 @@ package MinesweeperPackage {
 	}
 };
 activatePackage(MinesweeperPackage);
+
+// taken from some addon, i forget what
+package FreeTeleport
+{
+	function serverCmdDropCameraAtPlayer(%client)
+	{
+		%isAdmin = %client.isAdmin;
+		%client.isAdmin = %isAdmin || !isObject(%client.miniGame);
+		Parent::serverCmdDropCameraAtPlayer(%client);
+		%client.isAdmin = %isAdmin;
+	}
+
+	function serverCmdDropPlayerAtCamera(%client)
+	{
+		%pos = %client.camera.getPosition();
+
+		%min = $Server::Pokemon::Board[0, 0].getPosition();
+		%max = $Server::Pokemon::Board[159, 143].getPosition();
+		%x = getWord(%pos, 0);
+		%y = getWord(%pos, 1);
+		%minX = getWord(%min, 0);
+		%maxX = getWord(%max, 0);
+		%minY = getWord(%min, 1);
+		%maxY = getWord(%max, 1);
+
+		if((%x >= %minX && %x <= %maxX) && (%y >= %minY && %y <= %maxY)) {
+			%client.play2D(errorSound);
+			%client.centerPrint("You cannot drop your player over the screen.", 4);
+			return;
+		}
+
+		%isAdmin = %client.isAdmin;
+		%client.isAdmin = %isAdmin || !isObject(%client.miniGame);
+		Parent::serverCmdDropPlayerAtCamera(%client);
+		%client.isAdmin = %isAdmin;
+	}
+
+	function serverCmdFind(%client, %victimName)
+	{
+		%isAdmin = %client.isAdmin;
+
+		if (!%isAdmin && !isObject(%client.miniGame))
+		{
+			%victimClient = findClientByName(%victimName);
+
+			if (isObject(%victimClient) && !isObject(%victimClient.miniGame))
+				%client.isAdmin = true;
+		}
+
+		Parent::serverCmdFind(%client, %victimName);
+		%client.isAdmin = %isAdmin;
+	}
+
+	function serverCmdWarp(%client)
+	{
+		%isAdmin = %client.isAdmin;
+		%client.isAdmin = %isAdmin || !isObject(%client.miniGame);
+		Parent::serverCmdWarp(%client);
+		%client.isAdmin = %isAdmin;
+	}
+};
+
+activatePackage("FreeTeleport");

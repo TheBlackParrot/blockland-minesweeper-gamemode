@@ -29,6 +29,7 @@ function GameConnection::deleteGrid(%this) {
 	}
 
 	$Server::Minesweeper::GridSpot[%this.gridIdx] = 0;
+	%this.gridIdx = "";
 }
 
 function GameConnection::setSurroundingMines(%this) {
@@ -449,7 +450,6 @@ function serverCmdEndMinesweeper(%client, %clear) {
 	%client.endMinesweeper();
 	if(%clear !$= "") {
 		%client.deleteGrid();
-		%client.gridIdx = "";
 		%client.finished = false;
 		%client.started = false;
 	}
